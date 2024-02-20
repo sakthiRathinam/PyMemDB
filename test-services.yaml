@@ -1,0 +1,8 @@
+version: "3"
+services:
+  redis:
+    container_name: redis-cli
+    build:
+      context: ./
+    ports:
+      - "6379:6379"
