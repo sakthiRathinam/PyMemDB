@@ -1,0 +1,32 @@
+{
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "python.defaultInterpreterPath": ".venv/bin/python",
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": true,
+      "source.organizeImports.ruff": true
+    }
+  },
+  "cSpell.words": [],
+  "files.exclude": {
+    ".ipynb_checkpoints/": true,
+    ".ruff_cache/": true,
+    "**/.venv": true,
+    ".testmondata": true,
+    "poetry.lock": true,
+    "requirements.txt": true,
+    "**/__pycache__": true
+  },
+  "editor.rulers": [
+    100
+  ],
+  "python.analysis.autoFormatStrings": true,
+  "python.analysis.completeFunctionParens": true,
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.importFormat": "relative",
+  "python.analysis.inlayHints.pytestParameters": true,
+  "python.analysis.typeCheckingMode": "basic"
+}
