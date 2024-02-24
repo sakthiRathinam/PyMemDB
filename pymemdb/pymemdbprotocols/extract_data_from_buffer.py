@@ -1,8 +1,10 @@
+from typing import Tuple
+
 from pymemdb.pymemdbprotocols.protocol_factory import PROTOCOL_FACTORY
-from pymemdb.pymemdbprotocols.protocol_types import RedisParsedData
+from pymemdb.pymemdbprotocols.protocol_types import RESPParsed
 
 
-def extract_data_from_buffer(buffer: bytes) -> RedisParsedData:
+def extract_data_from_buffer(buffer: bytes) -> Tuple[(RESPParsed | None, int)]:
     first_character = chr(buffer[0])
     parsing_func = PROTOCOL_FACTORY[first_character]
     return parsing_func(buffer)
