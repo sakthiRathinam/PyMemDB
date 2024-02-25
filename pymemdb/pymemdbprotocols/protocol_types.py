@@ -22,5 +22,10 @@ class Integer(RESPParsed):
 
 
 @dataclass
+class SimpleError(RESPParsed):
+    data: str
+
+
+@dataclass
 class Array(RESPParsed):
     data: list[RESPParsed]
