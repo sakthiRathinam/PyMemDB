@@ -3,7 +3,7 @@ from typing import Any
 import pytest
 
 from pymemdb.pymemdbprotocols.extract_data_from_buffer import extract_data_from_buffer
-from pymemdb.pymemdbprotocols.protocol_types import Integer, SimpleString
+from pymemdb.pymemdbprotocols.protocol_types import BulkString, Integer, SimpleString
 
 
 @pytest.mark.parametrize(
@@ -22,11 +22,24 @@ def test_simple_string_parser(buffer: bytes, expected_output: Any) -> None:
 @pytest.mark.parametrize(
     "buffer,expected_output",
     [
-        (b":23\r\n", (Integer(data=23), 5)),  # Normal integer case
+        (b":23\r\n", (Integer(data=23), 5)),
         (b":2.9\r\n", (None, 0)),
         (b":-2\r\n", (Integer(data=-2), 5)),
     ],
 )
 def test_number_parser(buffer: bytes, expected_output: Any) -> None:
+    actual_output = extract_data_from_buffer(buffer)
+    assert actual_output == expected_output
+
+
+@pytest.mark.parametrize(
+    "buffer,expected_output",
+    [
+        (b"$5\r\nhello\r\n", (BulkString(data=b"hello"), 11)),
+        (b"$5n\r\nhello\r\n", (None, 0)),
+        (b"$5\r\nhelloooo\r\n", (BulkString(data=b"hello"), 14)),
+    ],
+)
+def test_bulk_string_parser(buffer: bytes, expected_output: Any) -> None:
     actual_output = extract_data_from_buffer(buffer)
     assert actual_output == expected_output

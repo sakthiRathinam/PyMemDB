@@ -13,7 +13,7 @@ class SimpleString(RESPParsed):
 
 @dataclass
 class BulkString(RESPParsed):
-    data: str
+    data: bytes
 
 
 @dataclass
