@@ -2,11 +2,15 @@ from typing import Any
 
 import pytest
 
-from pymemdb.pymemdbprotocols.extract_data_from_buffer import extract_data_from_buffer
+from pymemdb.pymemdbprotocols.extract_data_from_buffer import (
+    decode_data_from_buffer,
+    encode_data_from_resp_parsed,
+)
 from pymemdb.pymemdbprotocols.protocol_types import (
     Array,
     BulkString,
     Integer,
+    RESPParsed,
     SimpleError,
     SimpleString,
 )
@@ -21,7 +25,7 @@ from pymemdb.pymemdbprotocols.protocol_types import (
     ],
 )
 def test_simple_string_parser(buffer: bytes, expected_output: Any) -> None:
-    actual_output = extract_data_from_buffer(buffer)
+    actual_output = decode_data_from_buffer(buffer)
     assert actual_output == expected_output
 
 
@@ -34,7 +38,7 @@ def test_simple_string_parser(buffer: bytes, expected_output: Any) -> None:
     ],
 )
 def test_number_parser(buffer: bytes, expected_output: Any) -> None:
-    actual_output = extract_data_from_buffer(buffer)
+    actual_output = decode_data_from_buffer(buffer)
     assert actual_output == expected_output
 
 
@@ -47,7 +51,7 @@ def test_number_parser(buffer: bytes, expected_output: Any) -> None:
     ],
 )
 def test_bulk_string_parser(buffer: bytes, expected_output: Any) -> None:
-    actual_output = extract_data_from_buffer(buffer)
+    actual_output = decode_data_from_buffer(buffer)
     assert actual_output == expected_output
 
 
@@ -128,7 +132,7 @@ wrong_array_len_part_two = (
     ],
 )
 def test_array_parser(buffer: bytes, expected_output: Any) -> None:
-    actual_output = extract_data_from_buffer(buffer)
+    actual_output = decode_data_from_buffer(buffer)
     assert actual_output == expected_output
 
 
@@ -140,5 +144,19 @@ def test_array_parser(buffer: bytes, expected_output: Any) -> None:
     ],
 )
 def test_simple_error_parser(buffer: bytes, expected_output: Any) -> None:
-    actual_output = extract_data_from_buffer(buffer)
+    actual_output = decode_data_from_buffer(buffer)
+    assert actual_output == expected_output
+
+
+@pytest.mark.parametrize(
+    "resp_parsed,expected_output",
+    [
+        (
+            SimpleError(data="Error message"),
+            b"-Error message\r\n",
+        ),
+    ],
+)
+def test_protocol_encoders(resp_parsed: RESPParsed, expected_output: bytes):
+    actual_output = encode_data_from_resp_parsed(resp_parsed)
     assert actual_output == expected_output
