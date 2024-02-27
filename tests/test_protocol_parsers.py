@@ -155,6 +155,24 @@ def test_simple_error_parser(buffer: bytes, expected_output: Any) -> None:
             SimpleError(data="Error message"),
             b"-Error message\r\n",
         ),
+        (Integer(data=23), b":23\r\n"),
+        (SimpleString(data="ok"), b"+ok\r\n"),
+        (
+            BulkString(data=b"hello"),
+            b"$5\r\nhello\r\n",
+        ),
+        (
+            Array(
+                data=[
+                    Integer(data=3),
+                    Integer(data=-5),
+                    SimpleString(data="this was fun"),
+                    BulkString(data=b"echo"),
+                    BulkString(data=b"world"),
+                ]
+            ),
+            everything_mixed,
+        ),
     ],
 )
 def test_protocol_encoders(resp_parsed: RESPParsed, expected_output: bytes):
