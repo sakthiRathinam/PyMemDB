@@ -21,8 +21,8 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.poe.tasks]
-run-server = 'python manage.py runserver 0.0.0.0:5000'
-test   = 'docker compose exec server pytest -p no:cacheprovider --durations=10'
+run-cli = 'python pymemdb/pymemdb-cli/cli.py'
+run-test-services = 'docker compose -f "test-services.yaml" up --build'
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.

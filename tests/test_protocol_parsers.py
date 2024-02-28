@@ -2,10 +2,6 @@ from typing import Any
 
 import pytest
 
-from pymemdb.pymemdbprotocols.extract_data_from_buffer import (
-    decode_data_from_buffer,
-    encode_data_from_resp_parsed,
-)
 from pymemdb.pymemdbprotocols.protocol_types import (
     Array,
     BulkString,
@@ -13,6 +9,10 @@ from pymemdb.pymemdbprotocols.protocol_types import (
     RESPParsed,
     SimpleError,
     SimpleString,
+)
+from pymemdb.pymemdbprotocols.resp_formatter import (
+    decode_data_from_buffer,
+    encode_data_from_resp_parsed,
 )
 
 
