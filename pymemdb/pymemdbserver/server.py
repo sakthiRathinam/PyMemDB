@@ -1,6 +1,7 @@
 import socket
 
-from ..pymemdbprotocols.resp_formatter import decode_data_from_buffer
+from pymemdb.pymemdbcommands.handle_command import handle_command
+from pymemdb.pymemdbprotocols.resp_formatter import decode_data_from_buffer
 
 
 class Server:
@@ -15,7 +16,7 @@ class Server:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
             self._server_socket = server_socket
             server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            server_socket.bind((self.port, self.host))
+            server_socket.bind((self.host, self.port))
             server_socket.listen()
             conn, addr = server_socket.accept()
             self.handle_client_connection(conn)
@@ -23,8 +24,16 @@ class Server:
     def handle_client_connection(self, conn: socket.socket):
         buffer = bytearray()
         while True:
+            print("Waiting for data")
             data = conn.recv(1024)
             buffer.extend(data)
             frame, framesize = decode_data_from_buffer(buffer)
+            print(frame, framesize)
             if frame:
+                handle_command(frame)
                 buffer = buffer[framesize:]
+
+
+if __name__ == "__main__":
+    server = Server(7000, "127.0.0.1")
+    server.run()
