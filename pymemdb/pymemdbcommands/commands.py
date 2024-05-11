@@ -1,5 +1,5 @@
-from pymemdb.pymemdbprotocols.protocol_types import SimpleString
+from pymemdb.pymemdbprotocols.protocol_types import RESPParsed, SimpleString
 
 
-def ping_command(*args) -> bytes:
-    return SimpleString("PONG").resp_encode()
+def ping_command(*args) -> RESPParsed:
+    return SimpleString("PONG")

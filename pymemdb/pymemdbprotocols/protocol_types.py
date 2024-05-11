@@ -23,6 +23,9 @@ class BulkString(RESPParsed):
     def resp_encode(self) -> bytes:
         return f"${len(self.data)}\r\n{self.data.decode()}\r\n".encode()
 
+    def __str__(self) -> str:
+        return self.data.decode()
+
 
 @dataclass
 class Integer(RESPParsed):

@@ -1,7 +1,8 @@
 import socket
 
 from pymemdb.pymemdbcommands.handle_command import handle_command
-from pymemdb.pymemdbprotocols.resp_formatter import decode_data_from_buffer
+from pymemdb.pymemdbprotocols.protocol_types import RESPParsed
+from pymemdb.pymemdbprotocols.resp_formatter import decode_data_from_buffer_to_array
 
 
 class Server:
@@ -27,10 +28,11 @@ class Server:
             print("Waiting for data")
             data = conn.recv(1024)
             buffer.extend(data)
-            frame, framesize = decode_data_from_buffer(buffer)
+            frame, framesize = decode_data_from_buffer_to_array(buffer)
             print(frame, framesize)
             if frame:
-                handle_command(frame)
+                resp_object: RESPParsed = handle_command(frame)
+                conn.sendall(resp_object.resp_encode())
                 buffer = buffer[framesize:]
 
 

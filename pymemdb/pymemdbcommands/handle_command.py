@@ -3,18 +3,17 @@ from pymemdb.pymemdbprotocols.protocol_types import (
     Array,
     RESPParsed,
     SimpleError,
-    SimpleString,
 )
 
 
 def handle_command(command_data: Array) -> RESPParsed:
+    command = str(command_data.data[0])
     if not len(command_data.data):
         return SimpleError("Command shouldn't be empty")
-    if (
-        command_data.data[0] in COMMAND_FACTORY
-        and type(command_data.data[0]) == SimpleString
-    ):
-        command_executor, max_len = COMMAND_FACTORY.get([command_data.data[0]])
+    if command in COMMAND_FACTORY:
+        command_executor, max_len = COMMAND_FACTORY.get(command, [None, 0])
+        if not command_executor:
+            return SimpleError("Command not found")
         if len(command_data.data) > max_len:
             return SimpleError(
                 "Command length should be less than or equal to {}".format(max_len)
