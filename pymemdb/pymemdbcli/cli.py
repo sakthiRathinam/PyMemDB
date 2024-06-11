@@ -33,8 +33,7 @@ def receive_response(client_socket: socket.socket, buffer: bytearray) -> str:
         buffer.extend(received_buffer[0])
         frame, frame_size = decode_data_from_buffer(buffer)
         if frame:
-            buffer = buffer[frame_size:]
-            return frame.resp_encode().decode()
+            return frame.cli_resp_encode()
 
 
 def main(
@@ -43,8 +42,8 @@ def main(
 ) -> None:
     with socket.socket() as client_socket:
         client_socket.connect((server, port))
-        buffer: bytearray = bytearray()
         while True:
+            buffer: bytearray = bytearray()
             command: str = get_command(server, port)
 
             if command.lower() == "quit":

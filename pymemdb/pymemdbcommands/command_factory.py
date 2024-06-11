@@ -1,7 +1,8 @@
-from typing import Callable, Dict, Tuple
+from typing import Callable, Dict
 
-from pymemdb.pymemdbcommands.commands import ping_command
+from pymemdb.pymemdbcommands.commands import echo_command, ping_command
 
-COMMAND_FACTORY: Dict[str, Tuple[Callable, int]] = {
-    "ping": (ping_command, 1),  # handler,max len
+COMMAND_FACTORY: Dict[str, Callable] = {
+    "ping": ping_command,
+    "echo": echo_command,
 }

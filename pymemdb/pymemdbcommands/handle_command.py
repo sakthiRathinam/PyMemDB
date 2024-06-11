@@ -7,16 +7,16 @@ from pymemdb.pymemdbprotocols.protocol_types import (
 
 
 def handle_command(command_data: Array) -> RESPParsed:
-    command = str(command_data.data[0])
-    if not len(command_data.data):
-        return SimpleError("Command shouldn't be empty")
-    if command in COMMAND_FACTORY:
-        command_executor, max_len = COMMAND_FACTORY.get(command, [None, 0])
-        if not command_executor:
-            return SimpleError("Command not found")
-        if len(command_data.data) > max_len:
-            return SimpleError(
-                "Command length should be less than or equal to {}".format(max_len)
-            )
+    try:
+        command = str(command_data.data[0])
+        if not len(command_data.data):
+            return SimpleError("Command shouldn't be empty")
+        if command in COMMAND_FACTORY:
+            command_executor = COMMAND_FACTORY.get(command)
+            print(command_executor)
+            if not command_executor:
+                return SimpleError("Command not found")
         return command_executor(command_data)
-    return SimpleError("Error in command execution")
+    except Exception as e:
+        print(e)
+        return SimpleError("Error in command execution")
