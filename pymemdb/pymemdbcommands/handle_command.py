@@ -11,9 +11,8 @@ def handle_command(command_data: Array) -> RESPParsed:
         command = str(command_data.data[0])
         if not len(command_data.data):
             return SimpleError("Command shouldn't be empty")
-        if command in COMMAND_FACTORY:
-            command_executor = COMMAND_FACTORY.get(command)
-            print(command_executor)
+        if command.lower() in COMMAND_FACTORY:
+            command_executor = COMMAND_FACTORY.get(command.lower())
             if not command_executor:
                 return SimpleError("Command not found")
         return command_executor(command_data)
