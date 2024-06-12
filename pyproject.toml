@@ -23,6 +23,8 @@ build-backend = "poetry.core.masonry.api"
 [tool.poe.tasks]
 run-cli = 'python pymemdb/pymemdbcli/cli.py'
 run-server = 'python pymemdb/pymemdbserver/server.py'
+run-server-with-debugger = 'python -m debugpy --listen 5678 pymemdb/pymemdbserver/server.py'
+run-cli-with-debugger = 'python -m debugpy --listen 5679 pymemdb/pymemdbcli/cli.py'
 run-test-services = 'docker compose -f "test-services.yaml" up --build'
 
 [tool.ruff]
