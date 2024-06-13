@@ -1,4 +1,4 @@
-name: CI
+name: CI 
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  CI:
     runs-on: ubuntu-latest
 
     strategy:
@@ -37,3 +37,8 @@ jobs:
 
       - name: Run formatter
         run: poetry run poe run-formatter
+
+      - name: Check for uncommitted changes after formatting
+        run: |
+          git diff --exit-code
+        shell: bash

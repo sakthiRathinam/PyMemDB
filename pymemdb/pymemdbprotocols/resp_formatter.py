@@ -12,6 +12,7 @@ def decode_data_from_buffer(buffer: bytes) -> Tuple[(RESPParsed | None, int)]:
 
 def decode_data_from_buffer_to_array(buffer: bytes) -> Tuple[Array | None, int]:
     from pymemdb.pymemdbprotocols.protocol_parsers import array_parser
+
     return array_parser(buffer)
 
 
