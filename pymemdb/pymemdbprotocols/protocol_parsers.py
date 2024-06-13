@@ -75,7 +75,7 @@ def array_parser(buffer: bytes) -> Tuple[Array | None, int]:
         if array_len == 0:
             return None, 0
         seperator = first_separator_offset + 2
-        for i in range(array_len):
+        for _ in range(array_len):
             first_character = chr(buffer[seperator])
             parsing_func = PROTOCOL_FACTORY[first_character]
             next_item, next_offset = parsing_func(buffer[seperator:])

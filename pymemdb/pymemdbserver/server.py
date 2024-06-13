@@ -22,7 +22,7 @@ class Server:
                 while self._active:
                     conn, addr = server_socket.accept()
                     self.handle_client_connection(conn)
-        except socket.error as e:
+        except OSError as e:
             print(e)
 
         finally:
