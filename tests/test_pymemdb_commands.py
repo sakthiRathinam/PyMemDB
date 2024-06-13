@@ -42,3 +42,4 @@ def test_command_echo(command: Array, expected_output: Array) -> None:
     actual_output = handle_command(command)
     print(actual_output)
     assert actual_output == expected_output
+    assert False
