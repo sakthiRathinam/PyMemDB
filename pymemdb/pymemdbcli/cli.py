@@ -33,7 +33,7 @@ def receive_response(client_socket: socket.socket, buffer: bytearray) -> str:
         buffer.extend(received_buffer[0])
         frame, frame_size = decode_data_from_buffer(buffer)
         if frame:
-        return frame.cli_resp_encode()
+            return frame.cli_resp_encode()
 
 
 def main(
