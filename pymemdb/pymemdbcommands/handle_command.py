@@ -1,4 +1,5 @@
 from pymemdb.pymemdbcommands.command_factory import COMMAND_FACTORY
+from pymemdb.pymemdbdatastructures.datastore import DataStore
 from pymemdb.pymemdbprotocols.protocol_types import (
     Array,
     RESPParsed,
@@ -6,7 +7,7 @@ from pymemdb.pymemdbprotocols.protocol_types import (
 )
 
 
-def handle_command(command_data: Array) -> RESPParsed:
+def handle_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
     try:
         command = str(command_data.data[0])
         if not len(command_data.data):
@@ -15,7 +16,7 @@ def handle_command(command_data: Array) -> RESPParsed:
             command_executor = COMMAND_FACTORY.get(command.lower())
             if not command_executor:
                 return SimpleError("Command not found")
-        return command_executor(command_data)
+        return command_executor(command_data, datastore)
     except Exception as e:
         print(e)
         return SimpleError("Error in command execution")
