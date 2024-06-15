@@ -64,8 +64,6 @@ class Array(RESPParsed):
     data: list[RESPParsed]
 
     def resp_encode(self) -> bytes:
-        if not self.data:
-        return b"*0\r\n"
         stringified_array_data = f"*{len(self.data)}\r\n" + "".join(
             [resp_parsed.resp_encode().decode() for resp_parsed in self.data]
         )
