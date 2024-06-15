@@ -1,6 +1,7 @@
 import socket
 
 from pymemdb.pymemdbcommands.handle_command import handle_command
+from pymemdb.pymemdbdatastructures.datastore import DataStore
 from pymemdb.pymemdbprotocols.protocol_types import RESPParsed
 from pymemdb.pymemdbprotocols.resp_formatter import decode_data_from_buffer_to_array
 
@@ -9,6 +10,7 @@ class Server:
     def __init__(self, port: int, host: str):
         self.port = port
         self.host = host
+        self.datastore = DataStore()
         self._active = False
 
     def run(self):
@@ -42,7 +44,7 @@ class Server:
             print(frame, framesize)
             if frame:
                 buffer.clear()
-                resp_object: RESPParsed = handle_command(frame)
+                resp_object: RESPParsed = handle_command(frame, self.datastore)
                 print(resp_object)
                 conn.sendall(resp_object.resp_encode())
 
