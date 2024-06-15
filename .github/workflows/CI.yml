@@ -57,15 +57,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: CI
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Create tag with timestamp
-        run: |
-          TIMESTAMP=$(date +'%Y%m%d%H%M%S')
-          TAG="build-${TIMESTAMP}"
-          git tag $TAG
-          git push origin $TAG
-        env:
-          GITHUB_TOKEN: ${{ secrets.REPO_TAG_TOKEN }}
-        shell: bash
+      - name: Apply a tag to the new commit
+        id: create_tag
+        uses: mcpierce/github-commit-timestamp-tagger@master
+        with:
+          repo-token: "${{ secrets.REPO_TAG_TOKEN }}"
+          base_version: "v0.1.0"
+      - name: Echo the tag name
+        run: echo ${{ steps.create_tag.outputs.tag_name }} 
