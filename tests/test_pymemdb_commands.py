@@ -1,3 +1,5 @@
+from typing import Tuple, Union
+
 import pytest
 
 from pymemdb.pymemdbcommands.handle_command import handle_command
@@ -48,12 +50,11 @@ def test_command_ping(command: Array, expected_output: SimpleString) -> None:
 def test_command_echo(command: Array, expected_output: Array) -> None:
     datastore = DataStore()
     actual_output = handle_command(command, datastore)
-    print(actual_output)
     assert actual_output == expected_output
 
 
 @pytest.mark.parametrize(
-    "command,expected_output",
+    "command,expected_output,expected_output_data",
     [
         (
             Array(
@@ -64,6 +65,7 @@ def test_command_echo(command: Array, expected_output: Array) -> None:
                 ]
             ),
             SimpleString("OK"),
+            "database-lover",
         ),
         (
             Array(
@@ -73,11 +75,62 @@ def test_command_echo(command: Array, expected_output: Array) -> None:
                 ]
             ),
             SimpleError("Length of set command should be 3"),
+            None,
         ),
     ],
 )
-def test_command_set(command: Array, expected_output: Array) -> None:
+def test_command_set(
+    command: Array,
+    expected_output: SimpleString | SimpleError,
+    expected_output_data: str | None,
+) -> None:
     datastore = DataStore()
     actual_output = handle_command(command, datastore)
-    print(actual_output)
+    assert actual_output == expected_output
+    assert datastore[str(command.data[1])] == expected_output_data
+
+
+@pytest.mark.parametrize(
+    "command,expected_output,set_data",
+    [
+        (
+            Array(
+                [
+                    BulkString(b"get"),
+                    BulkString(b"whoami"),
+                ]
+            ),
+            SimpleString("database-lover"),
+            ("whoami", "database-lover"),
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"get"),
+                    BulkString(b"naruto"),
+                ]
+            ),
+            SimpleError("Key not found"),
+            None,
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"get"),
+                ]
+            ),
+            SimpleError("Length of get command should be 2"),
+            None,
+        ),
+    ],
+)
+def test_command_get(
+    command: Array,
+    expected_output: SimpleString | SimpleError,
+    set_data: Union[Tuple[str, str], None],
+) -> None:
+    datastore = DataStore()
+    if set_data:
+        datastore[set_data[0]] = set_data[1]
+    actual_output = handle_command(command, datastore)
     assert actual_output == expected_output
