@@ -11,7 +11,7 @@ from pymemdb.pymemdbprotocols.protocol_types import (
 SEPERATOR = b"\r\n"
 
 
-def simple_string_parser(buffer: bytes) ->Tuple[SimpleString | None, int]:
+def simple_string_parser(buffer: bytes) -> Tuple[SimpleString | None, int]:
     find_offset_of_sep_start = buffer.find(SEPERATOR)
     if find_offset_of_sep_start == -1:
         return None, 0
