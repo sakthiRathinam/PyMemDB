@@ -10,9 +10,8 @@ ENV PIP_DEFAULT_TIMEOUT=400 \
     # cache is useless in docker image, so disable to reduce image size
     PIP_NO_CACHE_DIR=1 \
     POETRY_VERSION=1.6.0 \
-    AWS_DEFAULT_REGION=ap-south-1 \
     PATH="/root/.local/bin:$PATH" \
-    POETRY_VERSION=1.6.0
+    PYTHONPATH=/app
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     libpq-dev \
@@ -23,8 +22,8 @@ COPY poetry.lock pyproject.toml /app/
 
 RUN curl -sSL https://install.python-poetry.org | POETRY_VERSION=${POETRY_VERSION} python3 - \
     && poetry config virtualenvs.create false \
-    && poetry install --no-root --no-dev
+    && poetry install --no-root
 
 COPY . /app
 
-EXPOSE 6379
+EXPOSE 7000
