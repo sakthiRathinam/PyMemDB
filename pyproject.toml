@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 typer = "^0.9.0"
+asyncio = "^3.4.3"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -25,7 +26,9 @@ build-backend = "poetry.core.masonry.api"
 [tool.poe.tasks]
 run-cli = 'python pymemdb/pymemdbcli/cli.py'
 run-server = 'python pymemdb/pymemdbserver/server.py'
+run-async-server = 'python pymemdb/pymemdbserver/async_server.py'
 run-server-with-debugger = 'python -m debugpy --listen 5678 pymemdb/pymemdbserver/server.py'
+run-async-server-with-debugger = 'python -m debugpy --listen 5678 pymemdb/pymemdbserver/server.py'
 run-cli-with-debugger = 'python -m debugpy --listen 5679 pymemdb/pymemdbcli/cli.py'
 run-test-services = 'docker compose -f "test-services.yaml" up --build'
 run-all-tests = 'python -m pytest --disable-warnings -v'

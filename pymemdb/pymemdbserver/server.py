@@ -1,3 +1,4 @@
+import argparse
 import socket
 import threading
 
@@ -59,5 +60,9 @@ class Server:
 
 
 if __name__ == "__main__":
-    server = Server(7000, "127.0.0.1")
+    argparser = argparse.ArgumentParser()
+    argparser.add_argument("--port", type=int, default=7000)
+    argparser.add_argument("--host", type=str, default="127.0.0.1")
+    sysargs = argparser.parse_args()
+    server = Server(sysargs.port, sysargs.host)
     server.run()
