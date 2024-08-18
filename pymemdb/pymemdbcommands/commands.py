@@ -1,6 +1,7 @@
 from pymemdb.pymemdbdatastructures.datastore import DataStore
 from pymemdb.pymemdbprotocols.protocol_types import (
     Array,
+    BulkString,
     RESPParsed,
     SimpleError,
     SimpleString,
@@ -23,8 +24,8 @@ def get_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
     decoded_key = str(command_data.data[1])
     value = datastore[decoded_key]
     if value is None:
-        return SimpleError("Key not found")
-    return SimpleString(value)
+        value = ""
+    return BulkString(value.encode())
 
 
 def set_command(command_data: Array, datastore: "DataStore") -> RESPParsed:

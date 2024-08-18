@@ -69,6 +69,8 @@ wrong_array_len_part_two = (
     b"*3\r\n:3\r\n:-5\r\n+this was fun\r\n$4\r\necho\r\n$5\r\nworld\r\n"
 )
 
+group_of_arrays = b"*3\r\n$6\r\nCONFIG\r\n$3\r\nGET\r\n$4\r\nsave\r\n*3\r\n$6\r\nCONFIG\r\n$3\r\nGET\r\n$10\r\nappendonly\r\n"
+
 
 @pytest.mark.parametrize(
     "buffer,expected_output",
@@ -178,3 +180,28 @@ def test_simple_error_parser(buffer: bytes, expected_output: Any) -> None:
 def test_protocol_encoders(resp_parsed: RESPParsed, expected_output: bytes):
     actual_output = encode_data_from_resp_parsed(resp_parsed)
     assert actual_output == expected_output
+
+
+def test_group_of_arrays_parsing():
+    buffer = group_of_arrays
+    expected_output = [
+        Array(
+            data=[
+                BulkString(data=b"CONFIG"),
+                BulkString(data=b"GET"),
+                BulkString(data=b"save"),
+            ]
+        ),
+        Array(
+            data=[
+                BulkString(data=b"CONFIG"),
+                BulkString(data=b"GET"),
+                BulkString(data=b"appendonly"),
+            ]
+        ),
+    ]
+    first_array, frame_size = decode_data_from_buffer(buffer)
+    assert first_array == expected_output[0]
+    buffer = buffer[frame_size:]
+    second_array, frame_size = decode_data_from_buffer(buffer)
+    assert second_array == expected_output[1]

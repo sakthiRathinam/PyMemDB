@@ -110,7 +110,7 @@ def test_command_set(
                     BulkString(b"naruto"),
                 ]
             ),
-            SimpleError("Key not found"),
+            BulkString(b"(nil)"),
             None,
         ),
         (

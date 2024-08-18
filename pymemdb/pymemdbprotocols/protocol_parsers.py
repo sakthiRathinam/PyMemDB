@@ -45,6 +45,7 @@ def get_length_from_first_sep(buffer: bytes) -> Tuple[int, int]:
 
 def bulk_string_parser(buffer: bytes) -> Tuple[BulkString | None, int]:
     try:
+        print("bulk string parser")
         first_separator_offset, buffer_string_len = get_length_from_first_sep(buffer)
         if buffer_string_len == -1:
             return None, 0
@@ -71,21 +72,22 @@ def array_parser(buffer: bytes) -> Tuple[Array | None, int]:
 
     parsed_array = []
     try:
+        print("here at array parser")
         first_separator_offset, array_len = get_length_from_first_sep(buffer)
         if array_len == 0:
             return None, 0
         seperator = first_separator_offset + 2
+        print(array_len)
         for _ in range(array_len):
             first_character = chr(buffer[seperator])
             parsing_func = PROTOCOL_FACTORY[first_character]
             next_item, next_offset = parsing_func(buffer[seperator:])
+            print(parsed_array)
             if next_item is None:
                 return None, 0
             parsed_array.append(next_item)
             seperator += next_offset
-        if len(buffer) != seperator:
-            return None, 0
-        return Array(data=parsed_array), len(buffer)
+        return Array(data=parsed_array), seperator
     except Exception as E:
         print(f"Parsed breaked due to this {E}")
         return None, 0
