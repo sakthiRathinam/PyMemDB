@@ -1,6 +1,7 @@
-from time import sleep
+import datetime
 
 import pytest
+from freezegun import freeze_time
 
 from pymemdb.pymemdbcommands.handle_command import handle_command
 from pymemdb.pymemdbdatastructures.datastore import DataStore
@@ -35,9 +36,10 @@ def test_command_set(
     expected_output: SimpleString | SimpleError,
     expected_output_data: str | None,
 ) -> None:
-    datastore = DataStore()
-    actual_output = handle_command(command, datastore)
-    assert actual_output == expected_output
-    print(datastore[str(command.data[1])])
-    sleep(11)
-    assert datastore[str(command.data[1])] == expected_output_data
+    initial_datetime = datetime.datetime.now()
+    with freeze_time(initial_datetime) as time:
+        datastore = DataStore()
+        actual_output = handle_command(command, datastore)
+        time.tick(delta=datetime.timedelta(seconds=11))
+        assert actual_output == expected_output
+        assert datastore[str(command.data[1])] == expected_output_data
