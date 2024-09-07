@@ -1,6 +1,7 @@
 import dataclasses as dc
 import threading
 import time
+from random import random
 from typing import Any
 
 
@@ -12,9 +13,9 @@ class DataEntry:
 
 def to_ns(format: str, expiry: int) -> int:
     match format.lower():
-        case "ex":
+        case "ex" | "exat":
             return expiry * 10**9
-        case "px":
+        case "px" | "pxat":
             return expiry * 10**6
         case _:
             return expiry * 10**9
@@ -43,11 +44,14 @@ class DataStore:
         self, key: Any, value: Any, expiry: int, format: str
     ) -> None:
         with self._lock:
-            expiry_in_ns: int = time.time_ns() + to_ns(format, expiry)
+            if format.lower() in ["ex", "px"]:
+                expiry_in_ns: int = time.time_ns() + to_ns(format, expiry)
+            expiry_in_ns = to_ns(format, expiry)
             self._data[key] = DataEntry(value, expiry_in_ns)
 
     def lazy_expire(self):
+        random_keys = random.sample(self._data.keys(), 20)
         with self._lock:
-            for key, value in self._data.items():
-                if value.ttl < time.time_ns():
+            for key in random_keys:
+                if self._data[key].ttl < time.time_ns():
                     del self._data[key]
