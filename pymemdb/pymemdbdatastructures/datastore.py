@@ -68,6 +68,7 @@ class DataStore:
                     ):
                         del self._data[key]
                         deleted_keys += 1
+                        total_no_of_keys -= 1
                 if (
                     total_no_of_keys * lazy_expire_retry_percentage
                 ) // 100 > deleted_keys or total_no_of_keys == 0:

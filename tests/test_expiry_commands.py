@@ -106,16 +106,22 @@ def test_background_lazy_expiry():
 
     initial_datetime = datetime.datetime.now()
     with freeze_time(initial_datetime) as time:
-        create_dummy_keys_in_datastore(test_datastore, 10, 10)
-        create_dummy_keys_in_datastore(test_datastore, 10, 30)
+        create_dummy_keys_in_datastore(test_datastore, 10, 500)
+        create_dummy_keys_in_datastore(test_datastore, 10, 1000)
         assert len(test_datastore._data) == 20
 
-        test_datastore.clean_expired_keys()
         time.tick(delta=datetime.timedelta(seconds=10))
-        assert len(test_datastore._data.keys()) == 10
+        test_datastore.lazy_expire()
+        assert len(test_datastore._data.keys()) == 20
 
         time.tick(delta=datetime.timedelta(seconds=10))
+        test_datastore.lazy_expire()
+        assert len(test_datastore._data.keys()) == 20
+
+        time.tick(delta=datetime.timedelta(seconds=500))
+        test_datastore.lazy_expire()
         assert len(test_datastore._data.keys()) == 10
 
-        time.tick(delta=datetime.timedelta(seconds=10))
+        time.tick(delta=datetime.timedelta(seconds=1500))
+        test_datastore.lazy_expire()
         assert len(test_datastore._data.keys()) == 0
