@@ -18,6 +18,12 @@ def echo_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
     return Array(data=command_data.data[1:])
 
 
+def exists_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
+    keys = [str(key) for key in command_data.data[1:]]
+    no_of_key_exists = datastore.no_of_keys_exists(keys)
+    return BulkString(no_of_key_exists.encode())
+
+
 def get_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
     if len(command_data.data) != 2:
         return SimpleError("Length of get command should be 2")
