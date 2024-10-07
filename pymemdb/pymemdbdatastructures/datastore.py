@@ -25,7 +25,7 @@ class DataStore:
     def __init__(self):
         self._data: dict = {}
         self._lock: threading.Lock = threading.Lock()
-        self._clean_expired_keys_thread_active = True
+        self.clean_expired_keys_thread_active = True
 
     def __getitem__(self, key: Any) -> Any:
         with self._lock:
@@ -75,9 +75,4 @@ class DataStore:
                     cleaning_loop_is_active = False
 
     def stop_cleaning_expired_keys_thread(self) -> None:
-        self._clean_expired_keys_thread_active = False
-
-    def clean_expired_keys(self) -> None:
-        while self._clean_expired_keys_thread_active:
-            self.lazy_expire()
-            time.sleep(10)
+        self.clean_expired_keys_thread_active = False

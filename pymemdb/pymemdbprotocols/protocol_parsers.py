@@ -45,10 +45,9 @@ def get_length_from_first_sep(buffer: bytes) -> Tuple[int, int]:
 
 def bulk_string_parser(buffer: bytes) -> Tuple[BulkString | None, int]:
     try:
-        print("bulk string parser")
         first_separator_offset, buffer_string_len = get_length_from_first_sep(buffer)
         if buffer_string_len == -1:
-            return None, 0
+            return BulkString(data=b""), 5
         bulk_string_bytes_start_offset = first_separator_offset + 2
         bulk_string_bytes_end_offset = (
             bulk_string_bytes_start_offset + buffer_string_len
@@ -72,7 +71,6 @@ def array_parser(buffer: bytes) -> Tuple[Array | None, int]:
 
     parsed_array = []
     try:
-        print("here at array parser")
         first_separator_offset, array_len = get_length_from_first_sep(buffer)
         if array_len == 0:
             return None, 0

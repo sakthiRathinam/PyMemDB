@@ -46,7 +46,7 @@ def main(
             buffer: bytearray = bytearray()
             command: str = get_command(server, port)
 
-            if command.lower() == "quit":
+            if command.lower() == "quit" or command.lower() == "exit":
                 break
 
             send_command(client_socket, command)
