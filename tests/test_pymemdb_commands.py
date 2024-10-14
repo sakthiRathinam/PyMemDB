@@ -1,4 +1,4 @@
-from typing import Tuple, Union
+from typing import List, Tuple, Union
 
 import pytest
 
@@ -132,5 +132,54 @@ def test_command_get(
     datastore = DataStore()
     if set_data:
         datastore[set_data[0]] = set_data[1]
+    actual_output = handle_command(command, datastore)
+    assert actual_output == expected_output
+
+
+@pytest.mark.parametrize(
+    "command,expected_output,keys",
+    [
+        (
+            Array(
+                [
+                    BulkString(b"exists"),
+                    BulkString(b"key1"),
+                    BulkString(b"key2"),
+                    BulkString(b"key3"),
+                ]
+            ),
+            BulkString(b"3"),
+            ["key1", "key2", "key3"],
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"exists"),
+                    BulkString(b"key1"),
+                    BulkString(b"key2"),
+                ]
+            ),
+            BulkString(b"0"),
+            [],
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"exists"),
+                ]
+            ),
+            SimpleError("Length of exists command should be at least 2"),
+            [],
+        ),
+    ],
+)
+def test_command_exists(
+    command: Array,
+    expected_output: BulkString | SimpleError,
+    keys: List[str],
+) -> None:
+    datastore = DataStore()
+    for key in keys:
+        datastore[key] = "dummy_value"
     actual_output = handle_command(command, datastore)
     assert actual_output == expected_output
