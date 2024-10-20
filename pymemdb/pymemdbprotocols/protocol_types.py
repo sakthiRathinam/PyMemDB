@@ -4,10 +4,12 @@ from dataclasses import dataclass
 
 class RESPParsed(ABC):
     @abstractmethod
-    def resp_encode(self) -> bytes: ...
+    def resp_encode(self) -> bytes:
+        ...
 
     @abstractmethod
-    def cli_resp_encode(self) -> str: ...
+    def cli_resp_encode(self) -> str:
+        ...
 
 
 @dataclass
@@ -34,7 +36,10 @@ class BulkString(RESPParsed):
         return self.data.decode()
 
     def cli_resp_encode(self) -> str:
-        return self.data.decode()
+        val = self.data.decode()
+        if not val:
+            return "(nil)"
+        return val
 
 
 @dataclass

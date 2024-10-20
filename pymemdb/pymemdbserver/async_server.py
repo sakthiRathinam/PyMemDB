@@ -23,12 +23,21 @@ class RedisServerProtocol(asyncio.Protocol):
         self.buffer.extend(data)
         print(self.buffer, "buffer")
         frame, framesize = decode_data_from_buffer_to_array(self.buffer)
+
         if frame:
             self.buffer = self.buffer[framesize:]
             print(self.buffer, "buffer after frame")
             resp_object: RESPParsed = handle_command(frame, _DATASTORE)
             print(resp_object.resp_encode())
             self.transport.write(resp_object.resp_encode())
+
+
+async def run_expiry_server_loop(datastore):
+    while datastore.clean_expired_keys_thread_active:
+        print("here called lazy expire")
+        datastore.lazy_expire()
+        await asyncio.sleep(10)
+        print("went out of lazy expire")
 
 
 class AsyncServer(asyncio.Protocol):
@@ -42,9 +51,8 @@ class AsyncServer(asyncio.Protocol):
         print(f"Server started at {self.host}:{self.port}")
 
         loop = asyncio.get_event_loop()
-        server = await loop.create_server(
-            lambda: RedisServerProtocol(), self.host, self.port
-        )
+        # loop.create_task(run_expiry_server_loop(_DATASTORE))
+        server = await loop.create_server(lambda: RedisServerProtocol(), self.host, self.port)
         try:
             async with server:
                 await server.serve_forever()
