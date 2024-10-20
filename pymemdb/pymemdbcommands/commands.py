@@ -44,9 +44,7 @@ def set_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
     if len(command_data.data) == 5:
         expiry_format = str(command_data.data[3])
         expiry_time = int(str(command_data.data[4]))
-        datastore.set_item_with_expiry(
-            decoded_key, decoded_value, expiry_time, expiry_format
-        )
+        datastore.set_item_with_expiry(decoded_key, decoded_value, expiry_time, expiry_format)
         return SimpleString("OK")
     datastore[decoded_key] = decoded_value
     return SimpleString("OK")

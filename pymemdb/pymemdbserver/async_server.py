@@ -23,7 +23,7 @@ class RedisServerProtocol(asyncio.Protocol):
         self.buffer.extend(data)
         print(self.buffer, "buffer")
         frame, framesize = decode_data_from_buffer_to_array(self.buffer)
-        
+
         if frame:
             self.buffer = self.buffer[framesize:]
             print(self.buffer, "buffer after frame")
@@ -52,9 +52,7 @@ class AsyncServer(asyncio.Protocol):
 
         loop = asyncio.get_event_loop()
         # loop.create_task(run_expiry_server_loop(_DATASTORE))
-        server = await loop.create_server(
-            lambda: RedisServerProtocol(), self.host, self.port
-        )
+        server = await loop.create_server(lambda: RedisServerProtocol(), self.host, self.port)
         try:
             async with server:
                 await server.serve_forever()

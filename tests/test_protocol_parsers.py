@@ -65,15 +65,11 @@ corrupted_data = b"*5\r\n:3\r\n:-5\r\n+this was fun\r\n$4\r\nechoo\r\n$5\r\nworl
 
 wrong_array_len = b"*0\r\n:3\r\n:-5\r\n+this was fun\r\n$4\r\nechoo\r\n$5\r\nworld\r\n"
 
-wrong_array_len_part_two = (
-    b"*3\r\n:3\r\n:-5\r\n+this was fun\r\n$4\r\necho\r\n$5\r\nworld\r\n"
-)
+wrong_array_len_part_two = b"*3\r\n:3\r\n:-5\r\n+this was fun\r\n$4\r\necho\r\n$5\r\nworld\r\n"
 
 group_of_arrays = b"*3\r\n$6\r\nCONFIG\r\n$3\r\nGET\r\n$4\r\nsave\r\n*3\r\n$6\r\nCONFIG\r\n$3\r\nGET\r\n$10\r\nappendonly\r\n"
 
-wrong_array_first_part_array = Array(
-    data=[Integer(data=3), Integer(data=-5), SimpleString(data="this was fun")]
-)
+wrong_array_first_part_array = Array(data=[Integer(data=3), Integer(data=-5), SimpleString(data="this was fun")])
 
 
 @pytest.mark.parametrize(

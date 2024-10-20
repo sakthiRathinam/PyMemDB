@@ -49,9 +49,7 @@ class DataStore:
                     existing_key_count += 1
             return str(existing_key_count)
 
-    def set_item_with_expiry(
-        self, key: Any, value: Any, expiry: int, format: str
-    ) -> None:
+    def set_item_with_expiry(self, key: Any, value: Any, expiry: int, format: str) -> None:
         with self._lock:
             if format.lower() in ["ex", "px"]:
                 expiry_in_ns: int = time.time_ns() + to_ns(format, expiry)
@@ -66,20 +64,13 @@ class DataStore:
             while cleaning_loop_is_active:
                 deleted_keys = 0
                 total_no_of_keys = len(self._data)
-                random_keys = random.sample(
-                    list(self._data.keys()), min(20, total_no_of_keys)
-                )
+                random_keys = random.sample(list(self._data.keys()), min(20, total_no_of_keys))
                 for key in random_keys:
-                    if (
-                        self._data[key].ttl != 0
-                        and self._data[key].ttl < time.time_ns()
-                    ):
+                    if self._data[key].ttl != 0 and self._data[key].ttl < time.time_ns():
                         del self._data[key]
                         deleted_keys += 1
                         total_no_of_keys -= 1
-                if (
-                    total_no_of_keys * lazy_expire_retry_percentage
-                ) // 100 > deleted_keys or total_no_of_keys == 0:
+                if (total_no_of_keys * lazy_expire_retry_percentage) // 100 > deleted_keys or total_no_of_keys == 0:
                     cleaning_loop_is_active = False
 
     def stop_cleaning_expired_keys_thread(self) -> None:

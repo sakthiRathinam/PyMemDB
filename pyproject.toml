@@ -38,7 +38,7 @@ run-lint = "ruff check"
 run-formatter = "ruff format"
 
 [tool.ruff]
-line-length = 88
+line-length = 130
 fix = true  # Automatically fix certain issues, if desired
 
 [tool.ruff.lint]

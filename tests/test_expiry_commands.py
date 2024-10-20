@@ -89,16 +89,12 @@ def test_lazy_expiry_algo_while_getting(
         assert datastore[str(command.data[1])] == expected_output_data
 
 
-def create_dummy_keys_in_datastore(
-    datastore: DataStore, no_of_keys: int, expiry_in_seconds: int
-) -> None:
+def create_dummy_keys_in_datastore(datastore: DataStore, no_of_keys: int, expiry_in_seconds: int) -> None:
     if expiry_in_seconds == 0:
         for i in range(no_of_keys):
             datastore[f"key{i}-{uuid.uuid1()}"] = f"value{i}"
     for i in range(no_of_keys):
-        datastore.set_item_with_expiry(
-            f"key{i}-{uuid.uuid1()}", f"value{i}", expiry_in_seconds, "ex"
-        )
+        datastore.set_item_with_expiry(f"key{i}-{uuid.uuid1()}", f"value{i}", expiry_in_seconds, "ex")
 
 
 def test_background_lazy_expiry():

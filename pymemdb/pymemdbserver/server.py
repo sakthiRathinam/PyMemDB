@@ -28,9 +28,7 @@ class Server:
                     print("Waiting for connection")
                     conn, addr = server_socket.accept()
                     print("Connected by", addr)
-                    threading.Thread(
-                        target=self.handle_client_connection, args=(conn,)
-                    ).start()
+                    threading.Thread(target=self.handle_client_connection, args=(conn,)).start()
         except OSError as e:
             print(e)
 
