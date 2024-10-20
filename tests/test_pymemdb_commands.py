@@ -74,7 +74,7 @@ def test_command_echo(command: Array, expected_output: Array) -> None:
                     BulkString(b"whoami"),
                 ]
             ),
-            SimpleError("Length of set command should be 3"),
+            SimpleError("Length of set command should be 3 or 5"),
             None,
         ),
     ],
@@ -100,7 +100,7 @@ def test_command_set(
                     BulkString(b"whoami"),
                 ]
             ),
-            SimpleString("database-lover"),
+            BulkString(data=b"database-lover"),
             ("whoami", "database-lover"),
         ),
         (
@@ -110,7 +110,7 @@ def test_command_set(
                     BulkString(b"naruto"),
                 ]
             ),
-            BulkString(b"(nil)"),
+            BulkString(data=b""),
             None,
         ),
         (

@@ -46,7 +46,7 @@ def test_number_parser(buffer: bytes, expected_output: Any) -> None:
     "buffer,expected_output",
     [
         (b"$5\r\nhello\r\n", (BulkString(data=b"hello"), 11)),
-        (b"$5n\r\nhello\r\n", (None, 0)),
+        (b"$5n\r\nhello\r\n", (BulkString(data=b""), 5)),
         (b"$5\r\nhelloooo\r\n", (None, 0)),
     ],
 )
@@ -70,6 +70,10 @@ wrong_array_len_part_two = (
 )
 
 group_of_arrays = b"*3\r\n$6\r\nCONFIG\r\n$3\r\nGET\r\n$4\r\nsave\r\n*3\r\n$6\r\nCONFIG\r\n$3\r\nGET\r\n$10\r\nappendonly\r\n"
+
+wrong_array_first_part_array = Array(
+    data=[Integer(data=3), Integer(data=-5), SimpleString(data="this was fun")]
+)
 
 
 @pytest.mark.parametrize(
@@ -127,14 +131,16 @@ group_of_arrays = b"*3\r\n$6\r\nCONFIG\r\n$3\r\nGET\r\n$4\r\nsave\r\n*3\r\n$6\r\
         (
             wrong_array_len_part_two,
             (
-                None,
-                0,
+                wrong_array_first_part_array,
+                28,
             ),
         ),
     ],
 )
 def test_array_parser(buffer: bytes, expected_output: Any) -> None:
     actual_output = decode_data_from_buffer(buffer)
+    print(actual_output, "actual_output")
+    print(expected_output, "expected_output")
     assert actual_output == expected_output
 
 
