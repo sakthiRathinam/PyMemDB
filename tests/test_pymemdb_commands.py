@@ -7,6 +7,7 @@ from pymemdb.pymemdbdatastructures.datastore import DataStore
 from pymemdb.pymemdbprotocols.protocol_types import (
     Array,
     BulkString,
+    Integer,
     SimpleError,
     SimpleString,
 )
@@ -148,7 +149,7 @@ def test_command_get(
                     BulkString(b"key3"),
                 ]
             ),
-            BulkString(b"3"),
+            Integer(3),
             ["key1", "key2", "key3"],
         ),
         (
@@ -159,7 +160,7 @@ def test_command_get(
                     BulkString(b"key2"),
                 ]
             ),
-            BulkString(b"0"),
+            Integer(0),
             [],
         ),
         (
@@ -173,13 +174,19 @@ def test_command_get(
         ),
     ],
 )
-def test_command_exists(
+def test_command_exists_and_delete(
     command: Array,
     expected_output: BulkString | SimpleError,
     keys: List[str],
 ) -> None:
     datastore = DataStore()
-    for key in keys:
-        datastore[key] = "dummy_value"
-    actual_output = handle_command(command, datastore)
-    assert actual_output == expected_output
+    test_commands = ["exists", "del"]
+    for command_name in test_commands:
+        for key in keys:
+            datastore[key] = "dummy_value"
+        command.data[0] = BulkString(command_name.encode())
+        actual_output = handle_command(command, datastore)
+        assert actual_output == expected_output
+        if command_name == "del":
+            for key in keys:
+                assert key not in datastore

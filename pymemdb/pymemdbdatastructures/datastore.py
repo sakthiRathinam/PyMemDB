@@ -41,13 +41,22 @@ class DataStore:
         with self._lock:
             self._data[key] = DataEntry(value)
 
-    def no_of_keys_exists(self, key: List[str]) -> str:
+    def no_of_keys_exists(self, key: List[str]) -> int:
         with self._lock:
             existing_key_count = 0
             for k in key:
                 if k in self._data:
                     existing_key_count += 1
-            return str(existing_key_count)
+            return existing_key_count
+
+    def del_all_keys(self, key: List[str]) -> int:
+        with self._lock:
+            deleted_count = 0
+            for k in key:
+                if k in self._data:
+                    del self._data[k]
+                    deleted_count += 1
+            return deleted_count
 
     def set_item_with_expiry(self, key: Any, value: Any, expiry: int, format: str) -> None:
         with self._lock:

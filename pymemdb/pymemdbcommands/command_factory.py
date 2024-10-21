@@ -1,6 +1,7 @@
 from typing import Callable, Dict
 
 from pymemdb.pymemdbcommands.commands import (
+    delete_command,
     echo_command,
     exists_command,
     get_command,
@@ -14,4 +15,5 @@ COMMAND_FACTORY: Dict[str, Callable] = {
     "get": get_command,
     "set": set_command,
     "exists": exists_command,
+    "del": delete_command,
 }
