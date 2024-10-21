@@ -7,6 +7,7 @@ from pymemdb.pymemdbdatastructures.datastore import DataStore
 from pymemdb.pymemdbprotocols.protocol_types import (
     Array,
     BulkString,
+    Integer,
     SimpleError,
     SimpleString,
 )
@@ -142,13 +143,63 @@ def test_command_get(
         (
             Array(
                 [
+                    BulkString(b"del"),
+                    BulkString(b"key1"),
+                    BulkString(b"key2"),
+                    BulkString(b"key3"),
+                ]
+            ),
+            Integer(3),
+            ["key1", "key2", "key3"],
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"del"),
+                    BulkString(b"key1"),
+                    BulkString(b"key2"),
+                ]
+            ),
+            Integer(0),
+            [],
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"del"),
+                ]
+            ),
+            SimpleError("Length of del command should be at least 2"),
+            [],
+        ),
+    ],
+)
+def test_command_delete(
+    command: Array,
+    expected_output: BulkString | SimpleError,
+    keys: List[str],
+) -> None:
+    datastore = DataStore()
+    for key in keys:
+        datastore[key] = "dummy_value"
+    actual_output = handle_command(command, datastore)
+    assert actual_output == expected_output
+    assert len(datastore) == 0
+
+
+@pytest.mark.parametrize(
+    "command,expected_output,keys",
+    [
+        (
+            Array(
+                [
                     BulkString(b"exists"),
                     BulkString(b"key1"),
                     BulkString(b"key2"),
                     BulkString(b"key3"),
                 ]
             ),
-            BulkString(b"3"),
+            Integer(3),
             ["key1", "key2", "key3"],
         ),
         (
@@ -159,7 +210,7 @@ def test_command_get(
                     BulkString(b"key2"),
                 ]
             ),
-            BulkString(b"0"),
+            Integer(0),
             [],
         ),
         (
