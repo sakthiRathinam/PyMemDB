@@ -22,7 +22,7 @@ def exists_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
 
 def delete_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
     if len(command_data.data) < 2:
-        return SimpleError("Length of exists command should be at least 2")
+        return SimpleError("Length of del command should be at least 2")
     keys = [str(key) for key in command_data.data[1:]]
     deleted_count = datastore.del_all_keys(keys)
     return Integer(deleted_count)

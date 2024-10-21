@@ -143,6 +143,56 @@ def test_command_get(
         (
             Array(
                 [
+                    BulkString(b"del"),
+                    BulkString(b"key1"),
+                    BulkString(b"key2"),
+                    BulkString(b"key3"),
+                ]
+            ),
+            Integer(3),
+            ["key1", "key2", "key3"],
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"del"),
+                    BulkString(b"key1"),
+                    BulkString(b"key2"),
+                ]
+            ),
+            Integer(0),
+            [],
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"del"),
+                ]
+            ),
+            SimpleError("Length of del command should be at least 2"),
+            [],
+        ),
+    ],
+)
+def test_command_delete(
+    command: Array,
+    expected_output: BulkString | SimpleError,
+    keys: List[str],
+) -> None:
+    datastore = DataStore()
+    for key in keys:
+        datastore[key] = "dummy_value"
+    actual_output = handle_command(command, datastore)
+    assert actual_output == expected_output
+    assert len(datastore) == 0
+
+
+@pytest.mark.parametrize(
+    "command,expected_output,keys",
+    [
+        (
+            Array(
+                [
                     BulkString(b"exists"),
                     BulkString(b"key1"),
                     BulkString(b"key2"),
@@ -174,19 +224,13 @@ def test_command_get(
         ),
     ],
 )
-def test_command_exists_and_delete(
+def test_command_exists(
     command: Array,
     expected_output: BulkString | SimpleError,
     keys: List[str],
 ) -> None:
     datastore = DataStore()
-    test_commands = ["exists", "del"]
-    for command_name in test_commands:
-        for key in keys:
-            datastore[key] = "dummy_value"
-        command.data[0] = BulkString(command_name.encode())
-        actual_output = handle_command(command, datastore)
-        assert actual_output == expected_output
-        if command_name == "del":
-            for key in keys:
-                assert key not in datastore
+    for key in keys:
+        datastore[key] = "dummy_value"
+    actual_output = handle_command(command, datastore)
+    assert actual_output == expected_output

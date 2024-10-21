@@ -27,6 +27,9 @@ class DataStore:
         self._lock: threading.Lock = threading.Lock()
         self.clean_expired_keys_thread_active = True
 
+    def __len__(self) -> int:
+        return len(self._data)
+
     def __getitem__(self, key: Any) -> Any:
         with self._lock:
             key_value = self._data.get(key, None)
