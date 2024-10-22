@@ -65,3 +65,18 @@ def incr_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
         return SimpleError("Value is not an integer")
     datastore[decoded_key] = str(value)
     return Integer(value)
+
+
+def decr_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
+    if len(command_data.data) != 2:
+        return SimpleError("Length of decr command should be 2")
+    decoded_key = str(command_data.data[1])
+    value = datastore[decoded_key]
+    if value is None:
+        value = 0
+    try:
+        value = int(value) - 1
+    except ValueError:
+        return SimpleError("Value is not an integer")
+    datastore[decoded_key] = str(value)
+    return Integer(value)

@@ -297,3 +297,51 @@ def test_command_incr(
     assert actual_output == expected_output
     if isinstance(expected_output, Integer):
         assert datastore["key"] == str(expected_output.data)
+
+
+@pytest.mark.parametrize(
+    "command, expected_output, initial_value",
+    [
+        (
+            Array([BulkString(b"decr"), BulkString(b"key")]),
+            Integer(-3),
+            "-2",
+        ),
+        (
+            Array([BulkString(b"decr"), BulkString(b"key")]),
+            Integer(-4),
+            "-3",
+        ),
+        (
+            Array([BulkString(b"decr")]),
+            SimpleError("Length of decr command should be 2"),
+            "-4",
+        ),
+        (
+            Array([BulkString(b"decr"), BulkString(b"key"), BulkString(b"key")]),
+            SimpleError("Length of decr command should be 2"),
+            "-5",
+        ),
+        (
+            Array([BulkString(b"decr"), BulkString(b"key")]),
+            SimpleError("Value is not an integer"),
+            "not_an_integer",
+        ),
+        (
+            Array([BulkString(b"decr"), BulkString(b"key")]),
+            SimpleError("Value is not an integer"),
+            "1.0",
+        ),
+    ],
+)
+def test_command_decr(
+    command: Array,
+    expected_output: Integer | SimpleError,
+    initial_value: str,
+) -> None:
+    datastore = DataStore()
+    datastore["key"] = initial_value
+    actual_output = handle_command(command, datastore)
+    assert actual_output == expected_output
+    if isinstance(expected_output, Integer):
+        assert datastore["key"] == str(expected_output.data)
