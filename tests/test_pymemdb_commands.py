@@ -1,3 +1,4 @@
+from collections import deque
 from typing import List, Tuple, Union
 
 import pytest
@@ -345,3 +346,93 @@ def test_command_decr(
     assert actual_output == expected_output
     if isinstance(expected_output, Integer):
         assert datastore["key"] == str(expected_output.data)
+
+
+@pytest.mark.parametrize(
+    "command,expected_output",
+    [
+        (
+            Array(
+                [
+                    BulkString(b"rpush"),
+                    BulkString(b"key"),
+                    BulkString(b"1"),
+                    BulkString(b"2"),
+                    BulkString(b"3"),
+                ]
+            ),
+            Integer(3),
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"rpush"),
+                    BulkString(b"key"),
+                    BulkString(b"4"),
+                    BulkString(b"5"),
+                    BulkString(b"6"),
+                ]
+            ),
+            Integer(3),
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"rpush"),
+                    BulkString(b"key"),
+                ]
+            ),
+            SimpleError("Length of rpush command should be at least 3"),
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"rpush"),
+                ]
+            ),
+            SimpleError("Length of rpush command should be at least 3"),
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"rpush"),
+                    BulkString(b"key"),
+                    BulkString(b"7"),
+                    BulkString(b"8"),
+                ]
+            ),
+            Integer(2),
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"rpush"),
+                    BulkString(b"key"),
+                    BulkString(b"9"),
+                    BulkString(b"10"),
+                    BulkString(b"11"),
+                ]
+            ),
+            Integer(3),
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"rpush"),
+                    BulkString(b"key"),
+                    BulkString(b"12"),
+                    BulkString(b"13"),
+                    BulkString(b"14"),
+                    BulkString(b"15"),
+                ]
+            ),
+            Integer(4),
+        ),
+    ],
+)
+def test_command_rpush(command: Array, expected_output: Integer | SimpleError) -> None:
+    datastore = DataStore()
+    actual_output = handle_command(command, datastore)
+    assert actual_output == expected_output
+    if isinstance(expected_output, Integer):
+        assert datastore[str(command.data[1])] == deque([str(data) for data in command.data[2:]])
