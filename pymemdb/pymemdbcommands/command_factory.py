@@ -8,6 +8,7 @@ from pymemdb.pymemdbcommands.commands import (
     get_command,
     incr_command,
     ping_command,
+    rpush_command,
     set_command,
 )
 
@@ -20,4 +21,5 @@ COMMAND_FACTORY: Dict[str, Callable] = {
     "del": delete_command,
     "incr": incr_command,
     "decr": decr_command,
+    "rpush": rpush_command,
 }

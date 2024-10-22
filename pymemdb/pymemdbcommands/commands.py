@@ -80,3 +80,13 @@ def decr_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
         return SimpleError("Value is not an integer")
     datastore[decoded_key] = str(value)
     return Integer(value)
+
+
+def rpush_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
+    if len(command_data.data) < 3:
+        return SimpleError("Length of rpush command should be at least 3")
+    key = str(command_data.data[1])
+    print(key)
+    values = [str(val) for val in command_data.data[2:]]
+    no_of_key_exists = datastore.append_to_list(key, values)
+    return Integer(no_of_key_exists)

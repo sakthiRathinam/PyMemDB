@@ -2,6 +2,7 @@ import dataclasses as dc
 import random
 import threading
 import time
+from collections import deque
 from typing import Any, List
 
 
@@ -60,6 +61,16 @@ class DataStore:
                     del self._data[k]
                     deleted_count += 1
             return deleted_count
+
+    def append_to_list(self, key: Any, value: List[Any]) -> int:
+        with self._lock:
+            if key not in self._data:
+                self._data[key] = DataEntry(deque(value))
+            else:
+                if not isinstance(self._data[key].data, deque):
+                    raise ValueError("Key is not a list")
+                self._data[key].data.extend(value)
+            return len(self._data[key].data)
 
     def set_item_with_expiry(self, key: Any, value: Any, expiry: int, format: str) -> None:
         with self._lock:
