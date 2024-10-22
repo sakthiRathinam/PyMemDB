@@ -96,7 +96,17 @@ def lpush_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
     if len(command_data.data) < 3:
         return SimpleError("Length of lpush command should be at least 3")
     key = str(command_data.data[1])
-    print(key)
     values = [str(val) for val in command_data.data[2:]]
     last_elem_ind = datastore.prepend_to_list(key, values[::-1])
     return Integer(last_elem_ind)
+
+
+def lrange_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
+    if len(command_data.data) != 4:
+        return SimpleError("Length of lrange command should be 4")
+    key = str(command_data.data[1])
+    try:
+    start = int(str(command_data.data[2]))
+    end = int(str(command_data.data[3]))
+    range_list = datastore.get_list_range(key, start, end)
+    return Array(data=[BulkString(str(val).encode()) for val in range_list])

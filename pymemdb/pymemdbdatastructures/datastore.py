@@ -82,6 +82,22 @@ class DataStore:
                 self._data[key].data.extendleft(value)
             return len(self._data[key].data)
 
+    def get_list_range(self, key: Any, start: int, end: int) -> List[Any]:
+        with self._lock:
+            range_list = []
+            if key not in self._data:
+                return []
+            if not isinstance(self._data[key].data, deque):
+                raise ValueError("Key is not a list")
+            if start < 0:
+                start = len(self._data[key].data) - abs(start)
+            try:
+                for index in range(start, end, -1):
+                    range_list.append(self._data[key].data[index])
+            except IndexError:
+                pass
+            return range_list
+
     def set_item_with_expiry(self, key: Any, value: Any, expiry: int, format: str) -> None:
         with self._lock:
             if format.lower() in ["ex", "px"]:
