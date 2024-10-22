@@ -5,6 +5,7 @@ from pymemdb.pymemdbcommands.commands import (
     echo_command,
     exists_command,
     get_command,
+    incr_command,
     ping_command,
     set_command,
 )
@@ -16,4 +17,5 @@ COMMAND_FACTORY: Dict[str, Callable] = {
     "set": set_command,
     "exists": exists_command,
     "del": delete_command,
+    "incr": incr_command,
 }
