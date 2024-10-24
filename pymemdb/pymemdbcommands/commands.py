@@ -106,7 +106,11 @@ def lrange_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
         return SimpleError("Length of lrange command should be 4")
     key = str(command_data.data[1])
     try:
-    start = int(str(command_data.data[2]))
-    end = int(str(command_data.data[3]))
+        start = int(str(command_data.data[2]))
+        end = int(str(command_data.data[3]))
+    except ValueError:
+        return SimpleError("Start and end should be integers")
+    if start < 0:
+        return Array(data=[])
     range_list = datastore.get_list_range(key, start, end)
     return Array(data=[BulkString(str(val).encode()) for val in range_list])

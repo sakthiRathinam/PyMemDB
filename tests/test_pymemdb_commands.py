@@ -526,3 +526,148 @@ def test_command_lpush(command: Array, expected_output: Integer | SimpleError) -
     assert actual_output == expected_output
     if isinstance(expected_output, Integer):
         assert datastore[str(command.data[1])] == deque([str(data) for data in command.data[2:]][::-1])
+
+
+@pytest.mark.parametrize(
+    "command, expected_output",
+    [
+        (
+            Array(
+                [
+                    BulkString(b"lrange"),
+                    BulkString(b"key"),
+                    BulkString(b"0"),
+                    BulkString(b"2"),
+                ]
+            ),
+            Array(
+                [
+                    BulkString(b"0"),
+                    BulkString(b"1"),
+                    BulkString(b"2"),
+                ]
+            ),
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"lrange"),
+                    BulkString(b"key"),
+                    BulkString(b"2"),
+                    BulkString(b"5"),
+                ]
+            ),
+            Array(
+                [
+                    BulkString(b"2"),
+                    BulkString(b"3"),
+                    BulkString(b"4"),
+                    BulkString(b"5"),
+                ]
+            ),
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"lrange"),
+                    BulkString(b"key"),
+                    BulkString(b"0"),
+                    BulkString(b"-5"),
+                ]
+            ),
+            Array(
+                [
+                    BulkString(b"0"),
+                    BulkString(b"1"),
+                    BulkString(b"2"),
+                    BulkString(b"3"),
+                    BulkString(b"4"),
+                    BulkString(b"5"),
+                ]
+            ),
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"lrange"),
+                    BulkString(b"key"),
+                    BulkString(b"5"),
+                    BulkString(b"9"),
+                ]
+            ),
+            Array(
+                [
+                    BulkString(b"5"),
+                    BulkString(b"6"),
+                    BulkString(b"7"),
+                    BulkString(b"8"),
+                    BulkString(b"9"),
+                ]
+            ),
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"lrange"),
+                    BulkString(b"key"),
+                    BulkString(b"0"),
+                    BulkString(b"0"),
+                ]
+            ),
+            Array(
+                [
+                    BulkString(b"0"),
+                ]
+            ),
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"lrange"),
+                    BulkString(b"key"),
+                    BulkString(b"10"),
+                    BulkString(b"15"),
+                ]
+            ),
+            Array(
+                [],
+            ),
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"lrange"),
+                    BulkString(b"key"),
+                    BulkString(b"2"),
+                    BulkString(b"1"),
+                ]
+            ),
+            Array(
+                [],
+            ),
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"lrange"),
+                    BulkString(b"key"),
+                    BulkString(b"2"),
+                ]
+            ),
+            SimpleError("Length of lrange command should be 4"),
+        ),
+        (
+            Array(
+                [
+                    BulkString(b"lrange"),
+                ]
+            ),
+            SimpleError("Length of lrange command should be 4"),
+        ),
+    ],
+)
+def test_command_lrange(command: Array, expected_output: Array | SimpleError) -> None:
+    datastore = DataStore()
+    datastore["key"] = deque([str(i) for i in range(10)])
+    actual_output = handle_command(command, datastore)
+    assert actual_output == expected_output

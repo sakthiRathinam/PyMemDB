@@ -89,10 +89,10 @@ class DataStore:
                 return []
             if not isinstance(self._data[key].data, deque):
                 raise ValueError("Key is not a list")
-            if start < 0:
-                start = len(self._data[key].data) - abs(start)
+            if end < 0:
+                end = len(self._data[key].data) - abs(end)
             try:
-                for index in range(start, end, -1):
+                for index in range(start, end + 1):
                     range_list.append(self._data[key].data[index])
             except IndexError:
                 pass

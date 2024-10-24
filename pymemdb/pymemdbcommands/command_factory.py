@@ -8,6 +8,7 @@ from pymemdb.pymemdbcommands.commands import (
     get_command,
     incr_command,
     lpush_command,
+    lrange_command,
     ping_command,
     rpush_command,
     set_command,
@@ -24,4 +25,5 @@ COMMAND_FACTORY: Dict[str, Callable] = {
     "decr": decr_command,
     "rpush": rpush_command,
     "lpush": lpush_command,
+    "lrange": lrange_command,
 }
