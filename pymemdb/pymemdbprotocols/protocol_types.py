@@ -75,4 +75,7 @@ class Array(RESPParsed):
         return stringified_array_data.encode()
 
     def cli_resp_encode(self) -> str:
-        return " ".join([resp_parsed.cli_resp_encode() for resp_parsed in self.data])
+        stringified_data = ""
+        for index, resp_parsed in enumerate(self.data):
+            stringified_data += f"{index + 1}) {resp_parsed.cli_resp_encode()}\n"
+        return stringified_data

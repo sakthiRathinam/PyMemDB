@@ -19,7 +19,7 @@ def encode_command(command: str) -> RESPParsed:
 
 
 def get_command(server: str, port: int) -> str:
-    return input(f"{server}:{port}>")
+    return input(f"{server}:{port} > ")
 
 
 def send_command(client_socket: socket.socket, command: str) -> None:
@@ -48,6 +48,10 @@ def main(
 
             if command.lower() == "quit" or command.lower() == "exit":
                 break
+
+            if command.lower() == "clear":
+                print("\033[H\033[J")
+                continue
 
             send_command(client_socket, command)
             response: str = receive_response(client_socket, buffer)
