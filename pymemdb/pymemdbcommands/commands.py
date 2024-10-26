@@ -86,7 +86,6 @@ def rpush_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
     if len(command_data.data) < 3:
         return SimpleError("Length of rpush command should be at least 3")
     key = str(command_data.data[1])
-    print(key)
     values = [str(val) for val in command_data.data[2:]]
     last_elem_ind = datastore.append_to_list(key, values)
     return Integer(last_elem_ind)

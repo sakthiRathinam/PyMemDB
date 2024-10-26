@@ -19,16 +19,12 @@ class RedisServerProtocol(asyncio.Protocol):
     def data_received(self, data):
         if not data:
             self.transport.close()
-        print(data, "data received")
         self.buffer.extend(data)
-        print(self.buffer, "buffer")
         frame, framesize = decode_data_from_buffer_to_array(self.buffer)
 
         if frame:
             self.buffer = self.buffer[framesize:]
-            print(self.buffer, "buffer after frame")
             resp_object: RESPParsed = handle_command(frame, _DATASTORE)
-            print(resp_object.resp_encode())
             self.transport.write(resp_object.resp_encode())
 
 

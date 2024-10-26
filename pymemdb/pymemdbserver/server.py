@@ -40,18 +40,14 @@ class Server:
         buffer = bytearray()
         try:
             while True:
-                print("Waiting for data")
                 data = conn.recv(1024)
-                print(data)
                 if not data:
                     break
                 buffer.extend(data)
                 frame, framesize = decode_data_from_buffer_to_array(buffer)
-                print(frame, framesize)
                 if frame:
                     buffer = buffer[framesize:]
                     resp_object: RESPParsed = handle_command(frame, self.datastore)
-                    print(resp_object)
                     conn.sendall(resp_object.resp_encode())
         finally:
             conn.close()

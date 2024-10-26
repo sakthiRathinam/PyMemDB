@@ -8,8 +8,14 @@ services:
     ports:
       - "7000:7000"
     command: poetry run poe run-server
+    profiles:
+      - pymemedb
+      - both
   redis-cli:
     container_name: redis-OG
     image: redis
     ports:
       - "6379:6379"
+    profiles:
+      - redis
+      - both
