@@ -3,9 +3,9 @@ from typing import List, Tuple, Union
 
 import pytest
 
-from pymemdb.pymemdbcommands.handle_command import handle_command
-from pymemdb.pymemdbdatastructures.datastore import DataStore
-from pymemdb.pymemdbprotocols.protocol_types import (
+from pymemdb.commands.handle_command import handle_command
+from pymemdb.datastructures.datastore import DataStore
+from pymemdb.protocols.protocol_types import (
     Array,
     BulkString,
     Integer,
@@ -671,3 +671,10 @@ def test_command_lrange(command: Array, expected_output: Array | SimpleError) ->
     datastore["key"] = deque([str(i) for i in range(10)])
     actual_output = handle_command(command, datastore)
     assert actual_output == expected_output
+
+
+def test_command_not_found() -> None:
+    datastore = DataStore()
+    command = Array([BulkString(b"flush"), BulkString(b"all"), BulkString(b"keys")])
+    actual_output = handle_command(command, datastore)
+    assert actual_output == SimpleError("ERR unknown command 'flush', with args beginning with: all keys")

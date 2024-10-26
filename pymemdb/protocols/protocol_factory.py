@@ -1,6 +1,6 @@
 from typing import Callable, Dict
 
-from pymemdb.pymemdbprotocols.protocol_parsers import (
+from pymemdb.protocols.protocol_parsers import (
     array_parser,
     bulk_string_parser,
     number_parser,

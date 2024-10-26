@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from pymemdb.pymemdbprotocols.protocol_types import (
+from pymemdb.protocols.protocol_types import (
     Array,
     BulkString,
     Integer,
@@ -10,7 +10,7 @@ from pymemdb.pymemdbprotocols.protocol_types import (
     SimpleError,
     SimpleString,
 )
-from pymemdb.pymemdbprotocols.resp_formatter import (
+from pymemdb.protocols.resp_formatter import (
     decode_data_from_buffer,
     encode_data_from_resp_parsed,
 )

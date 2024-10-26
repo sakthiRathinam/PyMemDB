@@ -1,5 +1,5 @@
-from pymemdb.pymemdbdatastructures.datastore import DataStore
-from pymemdb.pymemdbprotocols.protocol_types import Array, BulkString, Integer, RESPParsed, SimpleError, SimpleString
+from pymemdb.datastructures.datastore import DataStore
+from pymemdb.protocols.protocol_types import Array, BulkString, Integer, RESPParsed, SimpleError, SimpleString
 
 
 def ping_command(command_data: Array, datastore: "DataStore") -> RESPParsed:

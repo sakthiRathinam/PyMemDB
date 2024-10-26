@@ -1,7 +1,7 @@
 from typing import Tuple
 
-from pymemdb.pymemdbprotocols.protocol_factory import PROTOCOL_FACTORY
-from pymemdb.pymemdbprotocols.protocol_types import Array, RESPParsed
+from pymemdb.protocols.protocol_factory import PROTOCOL_FACTORY
+from pymemdb.protocols.protocol_types import Array, RESPParsed
 
 
 def decode_data_from_buffer(buffer: bytes) -> Tuple[(RESPParsed | None, int)]:
@@ -11,7 +11,7 @@ def decode_data_from_buffer(buffer: bytes) -> Tuple[(RESPParsed | None, int)]:
 
 
 def decode_data_from_buffer_to_array(buffer: bytes) -> Tuple[Array | None, int]:
-    from pymemdb.pymemdbprotocols.protocol_parsers import array_parser
+    from pymemdb.protocols.protocol_parsers import array_parser
 
     return array_parser(buffer)
 
