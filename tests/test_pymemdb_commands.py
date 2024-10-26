@@ -671,3 +671,10 @@ def test_command_lrange(command: Array, expected_output: Array | SimpleError) ->
     datastore["key"] = deque([str(i) for i in range(10)])
     actual_output = handle_command(command, datastore)
     assert actual_output == expected_output
+
+
+def test_command_not_found() -> None:
+    datastore = DataStore()
+    command = Array([BulkString(b"flush"), BulkString(b"all"), BulkString(b"keys")])
+    actual_output = handle_command(command, datastore)
+    assert actual_output == SimpleError("ERR unknown command 'flush', with args beginning with: all keys")
