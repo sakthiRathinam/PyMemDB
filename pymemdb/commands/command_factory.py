@@ -1,6 +1,6 @@
 from typing import Callable, Dict
 
-from pymemdb.pymemdbcommands.commands import (
+from pymemdb.commands.commands import (
     decr_command,
     delete_command,
     echo_command,

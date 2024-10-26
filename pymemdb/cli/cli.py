@@ -3,8 +3,8 @@ from typing import Any
 
 import typer
 
-from pymemdb.pymemdbprotocols.protocol_types import Array, BulkString, RESPParsed
-from pymemdb.pymemdbprotocols.resp_formatter import (
+from pymemdb.protocols.protocol_types import Array, BulkString, RESPParsed
+from pymemdb.protocols.resp_formatter import (
     decode_data_from_buffer,
     encode_data_from_resp_parsed,
 )

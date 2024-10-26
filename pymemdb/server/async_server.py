@@ -1,10 +1,10 @@
 import argparse
 import asyncio
 
-from pymemdb.pymemdbcommands.handle_command import handle_command
-from pymemdb.pymemdbdatastructures.datastore import DataStore
-from pymemdb.pymemdbprotocols.protocol_types import RESPParsed
-from pymemdb.pymemdbprotocols.resp_formatter import decode_data_from_buffer_to_array
+from pymemdb.commands.handle_command import handle_command
+from pymemdb.datastructures.datastore import DataStore
+from pymemdb.protocols.protocol_types import RESPParsed
+from pymemdb.protocols.resp_formatter import decode_data_from_buffer_to_array
 
 _DATASTORE = DataStore()
 

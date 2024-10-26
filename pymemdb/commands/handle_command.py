@@ -1,6 +1,6 @@
-from pymemdb.pymemdbcommands.command_factory import COMMAND_FACTORY
-from pymemdb.pymemdbdatastructures.datastore import DataStore
-from pymemdb.pymemdbprotocols.protocol_types import (
+from pymemdb.commands.command_factory import COMMAND_FACTORY
+from pymemdb.datastructures.datastore import DataStore
+from pymemdb.protocols.protocol_types import (
     Array,
     RESPParsed,
     SimpleError,

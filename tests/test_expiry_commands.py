@@ -4,9 +4,9 @@ import uuid
 import pytest
 from freezegun import freeze_time
 
-from pymemdb.pymemdbcommands.handle_command import handle_command
-from pymemdb.pymemdbdatastructures.datastore import DataStore
-from pymemdb.pymemdbprotocols.protocol_types import (
+from pymemdb.commands.handle_command import handle_command
+from pymemdb.datastructures.datastore import DataStore
+from pymemdb.protocols.protocol_types import (
     Array,
     BulkString,
     SimpleError,

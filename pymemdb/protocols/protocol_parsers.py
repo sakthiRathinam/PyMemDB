@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from pymemdb.pymemdbprotocols.protocol_types import (
+from pymemdb.protocols.protocol_types import (
     Array,
     BulkString,
     Integer,
@@ -60,7 +60,7 @@ def bulk_string_parser(buffer: bytes) -> Tuple[BulkString | None, int]:
 
 
 def array_parser(buffer: bytes) -> Tuple[Array | None, int]:
-    from pymemdb.pymemdbprotocols.protocol_factory import PROTOCOL_FACTORY
+    from pymemdb.protocols.protocol_factory import PROTOCOL_FACTORY
 
     parsed_array = []
     try:
