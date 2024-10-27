@@ -3,6 +3,7 @@ import asyncio
 
 from pymemdb.commands.handle_command import handle_command
 from pymemdb.datastructures.datastore import DataStore
+from pymemdb.persistence.persister import AppendOnlyPersister
 from pymemdb.protocols.protocol_types import RESPParsed
 from pymemdb.protocols.resp_formatter import decode_data_from_buffer_to_array
 
@@ -12,6 +13,7 @@ _DATASTORE = DataStore()
 class RedisServerProtocol(asyncio.Protocol):
     def __init__(self):
         self.buffer = bytearray()
+        self.perister = AppendOnlyPersister("appendonly.aof")
 
     def connection_made(self, transport):
         self.transport = transport

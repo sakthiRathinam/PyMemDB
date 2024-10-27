@@ -1,5 +1,6 @@
 from pymemdb.commands.command_factory import COMMAND_FACTORY
 from pymemdb.datastructures.datastore import DataStore
+from pymemdb.persistence.persister import AppendOnlyPersister
 from pymemdb.protocols.protocol_types import (
     Array,
     RESPParsed,
@@ -14,7 +15,10 @@ def handle_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
             return SimpleError("Command shouldn't be empty")
         if command.lower() in COMMAND_FACTORY:
             command_executor = COMMAND_FACTORY.get(command.lower())
-            return command_executor(command_data, datastore)
+            command_output = command_executor(command_data, datastore)
+            if isinstance(command_output, SimpleError):
+                return command_output
+            persist_command = _persist_command_to_aof(command, command_data, datastore.persister)
         return _handle_unrecognized_command(command_data)
     except Exception as e:
         print(e)
@@ -25,3 +29,15 @@ def _handle_unrecognized_command(command_data: Array) -> RESPParsed:
     args = " ".join([str(arg) for arg in command_data.data[1:]])
     error_message = f"ERR unknown command '{str(command_data.data[0])}', with args beginning with: {args}"
     return SimpleError(error_message)
+
+
+def _persist_command_to_aof(command: str, command_data: Array, persister: "AppendOnlyPersister") -> bool:
+    to_perist_commands = ["set", "del", "incr", "lpush", "rpush"]
+    if command in to_perist_commands:
+        try:
+            persister.log_command_to_file(command_data)
+            return True
+        except Exception as e:
+            print(e)
+            return False
+    return True
