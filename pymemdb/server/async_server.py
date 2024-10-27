@@ -71,10 +71,24 @@ if __name__ == "__main__":
     argparser.add_argument("--host", type=str, default="127.0.0.1")
     argparser.add_argument("--appendonly", type=bool, default=False)
     argparser.add_argument("--startexpiryloop", type=bool, default=False)
+    argparser.add_argument("--restoredb", type=bool, default=False)
+    argparser.add_argument("--aofpath", type=str, default="appendonly.aof")
     sysargs = argparser.parse_args()
+    print(sysargs)
     if sysargs.startexpiryloop:
         print("Info: Expiry loop started")
     if sysargs.appendonly:
         print("Info: Append Only File enabled")
+    if sysargs.restoredb:
+        print("Info: Restoring from AOF")
+        from pymemdb.persistence.restore import restore_from_file
+
+        db_restored = restore_from_file(sysargs.aofpath, DATASTORE)
+
+        if db_restored:
+            print("Info: Database restored successfully")
+        else:
+            print("Error: Database restoration failed")
+
     server = AsyncServer(sysargs.port, sysargs.host, sysargs.appendonly, sysargs.startexpiryloop)
     asyncio.run(server.run())
