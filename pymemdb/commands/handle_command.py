@@ -8,7 +8,7 @@ from pymemdb.protocols.protocol_types import (
 )
 
 
-def handle_command(command_data: Array, datastore: "DataStore", persister: AppendOnlyPersister | None) -> RESPParsed:
+def handle_command(command_data: Array, datastore: "DataStore", persister: AppendOnlyPersister | None = None) -> RESPParsed:
     try:
         command = str(command_data.data[0])
         if not len(command_data.data):
