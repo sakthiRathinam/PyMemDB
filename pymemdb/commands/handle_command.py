@@ -8,7 +8,7 @@ from pymemdb.protocols.protocol_types import (
 )
 
 
-def handle_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
+def handle_command(command_data: Array, datastore: "DataStore", persister: AppendOnlyPersister | None) -> RESPParsed:
     try:
         command = str(command_data.data[0])
         if not len(command_data.data):
@@ -18,7 +18,11 @@ def handle_command(command_data: Array, datastore: "DataStore") -> RESPParsed:
             command_output = command_executor(command_data, datastore)
             if isinstance(command_output, SimpleError):
                 return command_output
-            persist_command = _persist_command_to_aof(command, command_data, datastore.persister)
+            if persister:
+                persisted = _persist_command_to_aof(command, command_data, persister)
+                if not persisted:
+                    print("Error in persisting the command")
+            return command_output
         return _handle_unrecognized_command(command_data)
     except Exception as e:
         print(e)
@@ -35,7 +39,7 @@ def _persist_command_to_aof(command: str, command_data: Array, persister: "Appen
     to_perist_commands = ["set", "del", "incr", "lpush", "rpush"]
     if command in to_perist_commands:
         try:
-            persister.log_command_to_file(command_data)
+            persister.log_command_to_file(command_data.data)
             return True
         except Exception as e:
             print(e)

@@ -29,16 +29,16 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.poe.tasks]
-run-cli = 'python pymemdb/pymemdbcli/cli.py'
-run-server = 'python pymemdb/pymemdbserver/server.py'
-run-async-server = 'python pymemdb/pymemdbserver/async_server.py'
-run-server-with-debugger = 'python -m debugpy --listen 5678 pymemdb/pymemdbserver/server.py'
-run-async-server-with-debugger = 'python -m debugpy --listen 5678 pymemdb/pymemdbserver/server.py'
-run-cli-with-debugger = 'python -m debugpy --listen 5679 pymemdb/pymemdbcli/cli.py'
+run-cli = 'python pymemdb/cli/cli.py'
+run-server = 'python pymemdb/server/server.py'
+run-async-server = 'python pymemdb/server/async_server.py'
+run-server-with-debugger = 'python -m debugpy --listen 5678 pymemdb/server/server.py'
+run-async-server-with-debugger = 'python -m debugpy --listen 5678 pymemdb/server/server.py'
+run-cli-with-debugger = 'python -m debugpy --listen 5679 pymemdb/cli/cli.py'
 run-test-services = 'docker compose -f "test-services.yaml" up --build'
 run-all-tests = 'python -m pytest --disable-warnings -v'
 pytest-debug = "python -m pytest -o log_cli=true -o log_cli_level=INFO --capture=tee-sys"
-run-server-with-profiler = "python -m cProfile -o out.pstats pymemdb/pymemdbserver/async_server.py"
+run-server-with-profiler = "python -m cProfile -o out.pstats pymemdb/server/async_server.py"
 run-lint = "ruff check"
 run-formatter = "ruff format"
 

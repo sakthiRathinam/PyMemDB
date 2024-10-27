@@ -7,13 +7,13 @@ from pymemdb.persistence.persister import AppendOnlyPersister
 from pymemdb.protocols.protocol_types import RESPParsed
 from pymemdb.protocols.resp_formatter import decode_data_from_buffer_to_array
 
-_DATASTORE = DataStore()
+DATASTORE = DataStore()
 
 
 class RedisServerProtocol(asyncio.Protocol):
-    def __init__(self):
+    def __init__(self, enable_aof=False):
         self.buffer = bytearray()
-        self.perister = AppendOnlyPersister("appendonly.aof")
+        self.persister = AppendOnlyPersister("appendonly.aof") if enable_aof else None
 
     def connection_made(self, transport):
         self.transport = transport
@@ -26,7 +26,7 @@ class RedisServerProtocol(asyncio.Protocol):
 
         if frame:
             self.buffer = self.buffer[framesize:]
-            resp_object: RESPParsed = handle_command(frame, _DATASTORE)
+            resp_object: RESPParsed = handle_command(frame, DATASTORE, self.persister)
             self.transport.write(resp_object.resp_encode())
 
 
@@ -39,18 +39,21 @@ async def run_expiry_server_loop(datastore):
 
 
 class AsyncServer(asyncio.Protocol):
-    def __init__(self, port: int, host: str):
+    def __init__(self, port: int, host: str, enable_aof=False, start_expiry_loop=False):
         self.port = port
         self.host = host
         self._active = False
+        self.aof = enable_aof
+        self.start_expiry_loop = False
 
     async def run(self):
         self._active = True
         print(f"Server started at {self.host}:{self.port}")
 
         loop = asyncio.get_event_loop()
-        # loop.create_task(run_expiry_server_loop(_DATASTORE))
-        server = await loop.create_server(lambda: RedisServerProtocol(), self.host, self.port)
+        if self.start_expiry_loop:
+            loop.create_task(run_expiry_server_loop(DATASTORE))
+        server = await loop.create_server(lambda: RedisServerProtocol(enable_aof=self.aof), self.host, self.port)
         try:
             async with server:
                 await server.serve_forever()
@@ -66,6 +69,12 @@ if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--port", type=int, default=7000)
     argparser.add_argument("--host", type=str, default="127.0.0.1")
+    argparser.add_argument("--appendonly", type=bool, default=False)
+    argparser.add_argument("--startexpiryloop", type=bool, default=False)
     sysargs = argparser.parse_args()
-    server = AsyncServer(sysargs.port, sysargs.host)
+    if sysargs.startexpiryloop:
+        print("Info: Expiry loop started")
+    if sysargs.appendonly:
+        print("Info: Append Only File enabled")
+    server = AsyncServer(sysargs.port, sysargs.host, sysargs.appendonly, sysargs.startexpiryloop)
     asyncio.run(server.run())
