@@ -52,7 +52,13 @@ jobs:
         run: |
           git diff --exit-code
         shell: bash
-
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: unittests
+          name: codecov-umbrella
   create-tag:
     runs-on: ubuntu-latest
     needs: CI
@@ -64,4 +70,5 @@ jobs:
           repo-token: "${{ secrets.REPO_TAG_TOKEN }}"
           base_version: "v0.1.0"
       - name: Echo the tag name
-        run: echo ${{ steps.create_tag.outputs.tag_name }} 
+        run: echo ${{ steps.create_tag.outputs.tag_name }}
+
